@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ContextMenuModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.contextmenu.ContextMenuModule"]
+  }
+}
