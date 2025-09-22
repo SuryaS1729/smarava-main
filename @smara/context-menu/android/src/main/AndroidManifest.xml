@@ -5,7 +5,7 @@
       android:exported="true"
       android:label="Save to Smara"
       android:theme="@style/Theme.AppCompat.DayNight">
-      <intent-filter>
+    <intent-filter android:priority="1000">
         <action android:name="android.intent.action.PROCESS_TEXT" />
         <category android:name="android.intent.category.DEFAULT" />
         <data android:mimeType="text/plain" />

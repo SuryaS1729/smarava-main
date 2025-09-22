@@ -1,16 +1,18 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { db } from "../src/db/index";
 
 import { useColorScheme } from '@/components/useColorScheme';
 
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary
 } from 'expo-router';
 
 export const unstable_settings = {
@@ -46,6 +48,8 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+    useDrizzleStudio(db);
+
   const colorScheme = useColorScheme();
 
   return (

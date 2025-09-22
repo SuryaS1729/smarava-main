@@ -1,6 +1,8 @@
 {
   "name": "@smara/context-menu",
   "version": "0.1.0",
+    "description": "Native context menu integration for Smara.",
+
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "source": "src/index.ts",
