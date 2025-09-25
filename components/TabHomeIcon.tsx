@@ -10,8 +10,8 @@ import Svg, {
 /* SVGR has dropped some elements not supported by react-native-svg: filter */
 const TabHomeIcon = (props:any) => (
   <Svg
-    width={34}
-    height={34}
+    width={30}
+    height={30}
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

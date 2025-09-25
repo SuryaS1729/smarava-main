@@ -1,5 +1,6 @@
 
 
+import TabBookIcon from "@/components/TabBookIcon";
 import TabHomeIcon from "@/components/TabHomeIcon";
 import { Tabs } from "expo-router";
 
@@ -23,8 +24,16 @@ export default function TabsLayout() {
 
 
 
+
         }} />
-      <Tabs.Screen name="review" options={{ title: "Review" }} />
+      <Tabs.Screen name="review" options={{
+          title: 'Home',
+          tabBarIcon: ({ focused }) => <TabBookIcon focused={focused} />,
+
+
+
+
+        }}/>
       <Tabs.Screen name="background" options={{ title: "Background" }} />
     </Tabs>
   );
