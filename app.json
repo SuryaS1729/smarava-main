@@ -4,24 +4,24 @@
     "slug": "smarava",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon2.png",
     "scheme": "smarava",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FB5600"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.surya7314.smarava"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
+      // "adaptiveIcon": {
+      //   "foregroundImage": "./assets/images/adaptive-icon.png",
+      //   "backgroundColor": "#ffffff"
+      // },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.surya7314.smarava"
