@@ -1,10 +1,10 @@
 // WavyLayersBackground.tsx
 import {
-    Canvas,
-    Group,
-    Rect,
-    Skia,
-    vec,
+  Canvas,
+  Group,
+  Rect,
+  Skia,
+  vec,
 } from "@shopify/react-native-skia";
 import React, { useMemo } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
