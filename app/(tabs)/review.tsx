@@ -1,5 +1,6 @@
+import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Button, FlatList, Text, View } from "react-native";
+import { Alert, Button, FlatList, Pressable, Text, View } from "react-native";
 import { useWords } from "../../src/state/useWords";
 
 function last3DaysStartIso() {
@@ -9,10 +10,98 @@ function last3DaysStartIso() {
   return start.toISOString();
 }
 
+// Component to render text with highlighted words
+function HighlightedText({ 
+  text, 
+  wordsToHighlight, 
+  words, 
+  router 
+}: { 
+  text: string; 
+  wordsToHighlight: string[];
+  words: any[];
+  router: any;
+}) {
+  const renderHighlightedText = () => {
+    let parts = [text];
+    
+    // Split text by each word to highlight
+    wordsToHighlight.forEach(word => {
+      const newParts: string[] = [];
+      parts.forEach(part => {
+        if (typeof part === 'string') {
+          const regex = new RegExp(`\\b${word}\\b`, 'gi');
+          const splits = part.split(regex);
+          const matches = part.match(regex) || [];
+          
+          for (let i = 0; i < splits.length; i++) {
+            if (splits[i]) newParts.push(splits[i]);
+            if (matches[i]) newParts.push(matches[i]);
+          }
+        } else {
+          newParts.push(part);
+        }
+      });
+      parts = newParts;
+    });
+
+    return parts.map((part, index) => {
+      const isHighlighted = wordsToHighlight.some(word => 
+        part.toLowerCase() === word.toLowerCase()
+      );
+      
+      if (isHighlighted) {
+        // Find the word object to get its ID
+        const wordObj = words.find(w => 
+          w.text.toLowerCase() === part.toLowerCase()
+        );
+
+        return (
+          <Pressable
+            key={index}
+            onPress={() => {
+              if (wordObj) {
+                router.push(`/word/${wordObj.id}`);
+              }
+            }}
+            style={{
+              backgroundColor: '#FFE4B5',
+              paddingHorizontal: 2,
+              borderRadius: 3,
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: '#8B4513',
+              }}
+            >
+              {part}
+            </Text>
+          </Pressable>
+        );
+      }
+      
+      return (
+        <Text key={index}>
+          {part}
+        </Text>
+      );
+    });
+  };
+
+  return (
+    <Text style={{ lineHeight: 22, fontSize: 16 }}>
+      {renderHighlightedText()}
+    </Text>
+  );
+}
+
 export default function ReviewScreen() {
   const { words, initAndLoad } = useWords();
   const [busy, setBusy] = useState(false);
-  const [generatedSentences, setGeneratedSentences] = useState<string[]>([]);
+  const [generatedParagraph, setGeneratedParagraph] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => { initAndLoad(); }, []);
 
@@ -30,33 +119,29 @@ export default function ReviewScreen() {
     [recent]
   );
 
-  const generateSentences = async () => {
+  const generateParagraph = async () => {
     if (topThreeWords.length === 0) {
       return Alert.alert("Nothing to generate", "Add words first on the Words tab.");
     }
 
     setBusy(true);
-    setGeneratedSentences([]);
+    setGeneratedParagraph("");
 
     try {
-      const wordsText = topThreeWords.map(w => w.text).join(", ");
-      const prompt = `You are a helpful writing assistant. I will give you 3 words, and you need to create exactly 3 sentences that demonstrate the proper usage of these words in context.
+      const wordsText = topThreeWords.map(w => w.text);
+      const prompt = `You are a playful writing companion. The user has recently saved these 3 words: ${wordsText[0]}, ${wordsText[1]}, ${wordsText[2]}.  
 
-Requirements:
-- Write exactly 3 sentences
-- Each sentence should use one of the provided words naturally and meaningfully
-- The sentences should be educational and show clear usage of the word
-- Keep sentences concise but informative
-- Return only the sentences, one per line, without numbering or bullet points
-
-Words: ${wordsText}`;
+Write a short, engaging paragraph (4–6 sentences) that naturally uses all three words.  
+- It should read smoothly, not like vocabulary drills.  
+- You may either tie it to something contemporary (like daily life, culture, or news) OR turn it into a short whimsical story.  
+- Make sure the words fit the context and feel memorable.  
+- Keep the tone light, creative, and fun.`;
 
       const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
       if (!apiKey) {
         throw new Error('API key not found');
       }
 
-      // Use the correct API endpoint from the documentation
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
@@ -90,22 +175,14 @@ Words: ${wordsText}`;
         throw new Error('No content generated');
       }
 
-      const generatedText = data.candidates[0].content.parts[0].text;
-      
-      // Parse the response into sentences
-      const sentences = generatedText
-        .split('\n')
-        .map(s => s.trim())
-        .filter(s => s.length > 0 && !s.match(/^\d+\./)) // Remove numbered lines
-        .slice(0, 3); // Ensure we only take 3 sentences
-
-      setGeneratedSentences(sentences);
+      const generatedText = data.candidates[0].content.parts[0].text.trim();
+      setGeneratedParagraph(generatedText);
       setBusy(false);
 
     } catch (error) {
       setBusy(false);
-      console.error('Error generating sentences:', error);
-      Alert.alert("Error", `Failed to generate sentences: ${error.message}`);
+      console.error('Error generating paragraph:', error);
+      Alert.alert("Error", `Failed to generate paragraph: ${error.message}`);
     }
   };
 
@@ -128,24 +205,30 @@ Words: ${wordsText}`;
       )}
 
       <Button
-        title={busy ? "Generating…" : "Generate Example Sentences"}
-        onPress={generateSentences}
+        title={busy ? "Generating…" : "Generate Story"}
+        onPress={generateParagraph}
         disabled={busy || topThreeWords.length === 0}
       />
 
-      {generatedSentences.length > 0 && (
-        <>
-          <Text style={{ fontWeight: "600", marginTop: 8 }}>Generated Sentences:</Text>
-          <FlatList
-            data={generatedSentences}
-            keyExtractor={(_, index) => String(index)}
-            renderItem={({ item }) => (
-              <Text style={{ marginVertical: 4, lineHeight: 20, fontSize: 16 }}>
-                • {item}
-              </Text>
-            )}
+      {generatedParagraph && (
+        <View style={{ 
+          marginTop: 16, 
+          padding: 16, 
+          backgroundColor: '#F8F9FA', 
+          borderRadius: 12,
+          borderLeftWidth: 4,
+          borderLeftColor: '#4A90E2'
+        }}>
+          <Text style={{ fontWeight: "600", marginBottom: 8, color: '#4A90E2' }}>
+            Your Story:
+          </Text>
+          <HighlightedText 
+            text={generatedParagraph}
+            wordsToHighlight={topThreeWords.map(w => w.text)}
+            words={words}
+            router={router}
           />
-        </>
+        </View>
       )}
     </View>
   );

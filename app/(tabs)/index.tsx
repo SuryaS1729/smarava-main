@@ -1,4 +1,5 @@
 import { listenWordSaved } from "@smara/context-menu";
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from "react";
 import { Button, FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import { useWords } from "../../src/state/useWords";
@@ -7,6 +8,7 @@ export default function WordsScreen() {
   const { words, loading, initAndLoad, add, remove, reload } = useWords();
   const [text, setText] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     initAndLoad();
@@ -81,7 +83,10 @@ export default function WordsScreen() {
           </View>
         )}
         renderItem={({ item }) => (
-          <View style={styles.wordItem}>
+          <Pressable 
+            onPress={() => router.push(`/word/${item.id}`)}
+            style={styles.wordItem}
+          >
             <View style={styles.wordContent}>
               <Text style={styles.wordText}>{item.text}</Text>
               {item.source_app && (
@@ -90,10 +95,16 @@ export default function WordsScreen() {
                 </Text>
               )}
             </View>
-            <Pressable onPress={() => remove(item.id)} style={styles.deleteButton}>
+            <Pressable 
+              onPress={(e) => {
+                e.stopPropagation(); // Prevent navigation when deleting
+                remove(item.id);
+              }} 
+              style={styles.deleteButton}
+            >
               <Text style={styles.deleteText}>Delete</Text>
             </Pressable>
-          </View>
+          </Pressable>
         )}
       />
     </View>
