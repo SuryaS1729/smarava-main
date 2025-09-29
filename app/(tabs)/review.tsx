@@ -129,13 +129,13 @@ export default function ReviewScreen() {
 
     try {
       const wordsText = topThreeWords.map(w => w.text);
-      const prompt = `You are a playful writing companion. The user has recently saved these 3 words: ${wordsText[0]}, ${wordsText[1]}, ${wordsText[2]}.  
+      const prompt = `You are a writing companion. The user has recently saved these 3 words: ${wordsText[0]}, ${wordsText[1]}, ${wordsText[2]}.  
 
 Write a short, engaging paragraph (4–6 sentences) that naturally uses all three words.  
 - It should read smoothly, not like vocabulary drills.  
-- You may either tie it to something contemporary (like daily life, culture, or news) OR turn it into a short whimsical story.  
+- You may either tie it to something contemporary (like daily life, culture, or news).
 - Make sure the words fit the context and feel memorable.  
-- Keep the tone light, creative, and fun.`;
+- Keep the tone light.`;
 
       const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
       if (!apiKey) {
