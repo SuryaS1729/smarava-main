@@ -33,7 +33,31 @@
     },
     "plugins": [
       "expo-router",
-      "expo-sqlite"
+      "expo-sqlite",
+       [
+        "expo-font",
+        {
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Poppins",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/Poppins-Regular.ttf",
+                    "weight": 400,
+                    "style": "normal"
+                  }
+                ]
+              }
+            ]
+          },
+          "ios": {
+            "fonts": [
+              "./assets/fonts/Poppins-Regular.ttf"
+            ]
+          }
+        }
+      ],
     ],
     "experiments": {
       "typedRoutes": true

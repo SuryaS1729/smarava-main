@@ -62,6 +62,10 @@ export default function WordsScreen() {
           reload();
           setRefreshKey(prev => prev + 1);
         }} />
+        <Button title="Wall of Words" onPress={() => {
+          console.log("Navigating to Wall of Words");
+          router.push("/wall");
+        }} />
       </View>
 
       <Text style={styles.subtitle}>
